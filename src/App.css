@@ -36,3 +36,46 @@
     transform: rotate(360deg);
   }
 }
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: start;
+  min-width: 320px;
+  min-height: 100vh;
+}
+/* Audio controls */
+.audio-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Get Microphone button */
+.audio-controls .btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+  font-size: 16px;
+  padding: 10px 20px;
+  margin-right: 10px;
+}
+
+/* Start Recording button */
+.audio-controls .btn-success {
+  background-color: #198754;
+  border-color: #198754;
+}
+
+/* Stop Recording button */
+.audio-controls .btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Audio player */
+.audio-player {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

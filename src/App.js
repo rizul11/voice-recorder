@@ -1,14 +1,15 @@
-import React from "react";
-import AudioRecorder from "./component/AudioRecorder";
+import React from 'react';
+import './App.css';
+import AudioRecorder from './component/AudioRecorder';
 
 const App = () => {
-  return (
-    <div className="container d-flex justify-content-center align-items-center vh-100">
-      <div>
-        <AudioRecorder />
-      </div>
-    </div>
-  );
+    return (
+        <div className="App">
+            <header className="App-header">
+                <AudioRecorder />
+            </header>
+        </div>
+    );
 };
 
 export default App;

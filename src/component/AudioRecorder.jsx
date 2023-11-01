@@ -1,107 +1,36 @@
-import { useState, useRef } from "react";
-import "bootstrap/dist/css/bootstrap.min.css"; // Import Bootstrap CSS
-
-const mimeType = "audio/webm";
+import React, { useState } from 'react';
+import SpeechRecognition, { useSpeechRecognition } from 'react-speech-recognition';
 
 const AudioRecorder = () => {
-  const [permission, setPermission] = useState(false);
-  const mediaRecorder = useRef(null);
-  const [recordingStatus, setRecordingStatus] = useState("inactive");
-  const [stream, setStream] = useState(null);
-  const [audio, setAudio] = useState(null);
-  const [audioChunks, setAudioChunks] = useState([]);
+    const [textToCopy, setTextToCopy] = useState('');
 
-  const getMicrophonePermission = async () => {
-    if ("MediaRecorder" in window) {
-      try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({
-          audio: true,
-          video: false,
-        });
-        setPermission(true);
-        setStream(mediaStream);
-      } catch (err) {
-        alert(err.message);
-      }
-    } else {
-      alert("The MediaRecorder API is not supported in your browser.");
+    const startListening = () =>
+        SpeechRecognition.startListening({ continuous: true, language: 'en-IN' });
+    const { transcript, browserSupportsSpeechRecognition } = useSpeechRecognition();
+
+    if (!browserSupportsSpeechRecognition) {
+        return null;
     }
-  };
 
-  const startRecording = async () => {
-    setRecordingStatus("recording");
-    const media = new MediaRecorder(stream, { type: mimeType });
+    return (
+        <div className="container">
+            <h2>Speech to Text Converter</h2>
+            <br />
+            <p>
+                A React hook that converts speech from the microphone to text and makes it available to
+                your React components.
+            </p>
 
-    mediaRecorder.current = media;
+            <div className="main-content" onClick={() => setTextToCopy(transcript)}>
+                {transcript}
+            </div>
 
-    mediaRecorder.current.start();
-
-    let localAudioChunks = [];
-
-    mediaRecorder.current.ondataavailable = (event) => {
-      if (typeof event.data === "undefined") return;
-      if (event.data.size === 0) return;
-      localAudioChunks.push(event.data);
-    };
-
-    setAudioChunks(localAudioChunks);
-  };
-
-  const stopRecording = () => {
-    setRecordingStatus("inactive");
-    mediaRecorder.current.stop();
-
-    mediaRecorder.current.onstop = () => {
-      const audioBlob = new Blob(audioChunks, { type: mimeType });
-      const audioUrl = URL.createObjectURL(audioBlob);
-
-      setAudio(audioUrl);
-
-      setAudioChunks([]);
-    };
-  };
-
-  return (
-    <div>
-      <h2>Audio Recorder</h2>
-      <main>
-        <div className="audio-controls">
-          {!permission ? (
-            <button
-              onClick={getMicrophonePermission}
-              type="button"
-              className="btn btn-primary"
-            >
-              Get Microphone
-            </button>
-          ) : null}
-          {permission && recordingStatus === "inactive" ? (
-            <button
-              onClick={startRecording}
-              type="button"
-              className="btn btn-success"
-            >
-              Start Recording
-            </button>
-          ) : null}
-          {recordingStatus === "recording" ? (
-            <button
-              onClick={stopRecording}
-              type="button"
-              className="btn btn-danger"
-            >
-              Stop Recording
-            </button>
-          ) : null}
+            <div className="btn-style">
+                <button onClick={startListening}>Start Listening</button>
+                <button onClick={SpeechRecognition.stopListening}>Stop Listening</button>
+            </div>
         </div>
-        {audio ? (
-          <div className="audio-player">
-            <audio src={audio} controls></audio>
-          </div>
-        ) : null}
-      </main>
-    </div>
-  );
+    );
 };
 
 export default AudioRecorder;
